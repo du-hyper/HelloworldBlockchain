@@ -457,4 +457,25 @@ public class TransactionTool {
             throw new RuntimeException("没有该交易类型。");
         }
     }
+
+    /**
+     * 按照费率(每字符的手续费)从大到小排序交易
+     */
+    public static void sortByFeeRateDescend(List<Transaction> transactionList) {
+        if(transactionList == null){
+            return;
+        }
+        transactionList.sort((transaction1, transaction2) -> {
+            long transaction1FeeRate = TransactionTool.getFeeRate(transaction1);
+            long transaction2FeeRate = TransactionTool.getFeeRate(transaction2);
+            long diffFeeRate = transaction1FeeRate - transaction2FeeRate;
+            if(diffFeeRate>0){
+                return -1;
+            }else if(diffFeeRate==0){
+                return 0;
+            }else {
+                return 1;
+            }
+        });
+    }
 }
