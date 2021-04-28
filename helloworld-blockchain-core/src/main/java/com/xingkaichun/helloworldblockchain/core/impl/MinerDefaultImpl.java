@@ -1,6 +1,9 @@
 package com.xingkaichun.helloworldblockchain.core.impl;
 
-import com.xingkaichun.helloworldblockchain.core.*;
+import com.xingkaichun.helloworldblockchain.core.BlockchainDatabase;
+import com.xingkaichun.helloworldblockchain.core.Miner;
+import com.xingkaichun.helloworldblockchain.core.UnconfirmedTransactionDatabase;
+import com.xingkaichun.helloworldblockchain.core.Wallet;
 import com.xingkaichun.helloworldblockchain.core.model.Block;
 import com.xingkaichun.helloworldblockchain.core.model.transaction.Transaction;
 import com.xingkaichun.helloworldblockchain.core.model.transaction.TransactionInput;
@@ -11,11 +14,15 @@ import com.xingkaichun.helloworldblockchain.crypto.HexUtil;
 import com.xingkaichun.helloworldblockchain.crypto.model.Account;
 import com.xingkaichun.helloworldblockchain.netcore.transport.dto.TransactionDTO;
 import com.xingkaichun.helloworldblockchain.setting.GlobalSetting;
+import com.xingkaichun.helloworldblockchain.util.RandomUtil;
 import com.xingkaichun.helloworldblockchain.util.ThreadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 默认实现
@@ -25,8 +32,6 @@ import java.util.*;
 public class MinerDefaultImpl extends Miner {
 
     private static final Logger logger = LoggerFactory.getLogger(MinerDefaultImpl.class);
-
-    private static final Random RANDOM = new Random();
 
     //region 属性与构造函数
     //挖矿开关:默认打开挖矿的开关
@@ -47,8 +52,6 @@ public class MinerDefaultImpl extends Miner {
             }
             Account minerAccount = wallet.createAccount();
             Block block = obtainMiningBlock(minerAccount);
-            //随机nonce。好处：不同实例，从不同的nonce开始尝试计算符合要求的nonce。
-            byte[] nonceBytes = new byte[32];
             long startTimestamp = System.currentTimeMillis();
             while(true){
                 if(!mineOption){
@@ -58,8 +61,8 @@ public class MinerDefaultImpl extends Miner {
                 if(System.currentTimeMillis()-startTimestamp > GlobalSetting.MinerConstant.MINE_TIMESTAMP_PER_ROUND){
                     break;
                 }
-                RANDOM.nextBytes(nonceBytes);
-                block.setNonce(HexUtil.bytesToHexString(nonceBytes));
+                //随机一个nonce
+                block.setNonce(HexUtil.bytesToHexString(RandomUtil.random32Bytes()));
                 block.setHash(BlockTool.calculateBlockHash(block));
                 //挖矿成功
                 if(blockchainDataBase.getConsensus().isReachConsensus(blockchainDataBase,block)){
