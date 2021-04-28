@@ -72,8 +72,7 @@ public class MinerDefaultImpl extends Miner {
                     //将矿放入区块链
                     boolean isAddBlockToBlockchainSuccess = blockchainDataBase.addBlock(block);
                     if(!isAddBlockToBlockchainSuccess){
-                        logger.error("挖矿成功，但是放入区块链失败。请检查异常。");
-                        continue;
+                        logger.error("挖矿成功，但是放入区块链失败。");
                     }
                     break;
                 }
