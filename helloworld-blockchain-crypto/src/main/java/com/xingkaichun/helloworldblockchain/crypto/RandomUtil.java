@@ -11,7 +11,7 @@ public class RandomUtil {
 
     private static final Random RANDOM = new Random();
 
-    public static String random32BytesReturnHex(){
+    public static String random32BytesReturnHexadecimal(){
         byte[] randomBytes = random32Bytes();
         return HexUtil.bytesToHexString(randomBytes);
     }

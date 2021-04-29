@@ -52,7 +52,7 @@ public class MinerDefaultImpl extends Miner {
                     break;
                 }
                 //随机一个nonce
-                block.setNonce(RandomUtil.random32BytesReturnHex());
+                block.setNonce(RandomUtil.random32BytesReturnHexadecimal());
                 block.setHash(BlockTool.calculateBlockHash(block));
                 //挖矿成功
                 if(blockchainDataBase.getConsensus().isReachConsensus(blockchainDataBase,block)){
