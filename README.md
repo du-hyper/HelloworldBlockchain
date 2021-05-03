@@ -6,7 +6,7 @@ HelloworldBlockchain开发调试简单，下载源码，导入idea(eclipse)，�
 
 
 
-### 关于我
+### 关于我(邢开春)
 作者微信号xing_kai_chun
 
 
@@ -21,12 +21,32 @@ http://119.3.57.171/
 
 
 
-### 帮助手册
+### 数字货币初体验(在演示网站操作，无需下载、安装)
 [1.如何拥有一个数字货币账户？](https://zhuanlan.zhihu.com/p/352458209)  
 [2.有了账户，如何查看该账户的余额？](https://zhuanlan.zhihu.com/p/352458209)  
 [3.有了账户，怎么获取数字货币？](https://zhuanlan.zhihu.com/p/352458209)  
 [4.有了账户，账户上也有钱了，怎么进行交易？](https://zhuanlan.zhihu.com/p/352458209)  
 [5.怎么挖矿赚数字货币？](https://zhuanlan.zhihu.com/p/352458209)
+
+
+
+### 数字货币中体验(下载安装包，在自己机器上操作)(单机版本玩法：独乐乐)
+[单机版玩法](https://blog.csdn.net/xingkaichun/article/details/116377603)
+
+
+
+### 数字货币中体验(下载安装包，在自己机器上操作)(网络版本玩法：众乐乐。加入Helloworld网络，与大家一起玩)
+[网络版玩法](https://blog.csdn.net/xingkaichun/article/details/116377734)
+
+
+
+### 数字货币高体验(下载源码，导入集成开发工具，我的地盘我做主)
+如果真的想要学习区块链，怎么能不下载源码玩耍呢？
+
+
+
+### 数字货币超神体验(在github上提交issue、pull)
+在github上提交issue、pull，与社区一起学习区块链技术。
 
 
 
@@ -46,11 +66,21 @@ http://119.3.57.171/
 
 
 
+### 代码规范
+[代码规范](https://github.com/xingkaichun/HelloworldBlockchain/blob/master/code-specification.md)
+
+
+
+### 产品设计
+[产品设计](https://github.com/xingkaichun/HelloworldBlockchain/blob/master/helloworldcoin-design.md)
+
+
+
 ### 集成开发环境搭建
 #### eclipse
-HelloworldBlockchain项目没有任何复杂依赖，将项目导入eclipse，找到类文件com.xingkaichun.helloworldblockchain.explorer.HelloWorldBlockchainExplorerApplication，右键运行，正常情况下则会启动成功。接下来，打开浏览器，访问项目的前端地址 http://localhost/ ，快乐的调试玩耍吧。  
+HelloworldBlockchain项目没有任何复杂依赖，将项目导入eclipse，找到类文件com.xingkaichun.helloworldblockchain.explorer.HelloWorldBlockchainExplorerApplication，右键运行，正常情况下则会启动成功。接下来，打开浏览器，访问项目的前端地址 http://localhost/ ，快乐的调试玩耍吧。
 #### intellij idea
-HelloworldBlockchain项目没有任何复杂依赖，将项目导入idea，找到类文件com.xingkaichun.helloworldblockchain.explorer.HelloWorldBlockchainExplorerApplication，右键运行，正常情况下则会启动成功。接下来，打开浏览器，访问项目的前端地址 http://localhost/ ，快乐的调试玩耍吧。  
+HelloworldBlockchain项目没有任何复杂依赖，将项目导入idea，找到类文件com.xingkaichun.helloworldblockchain.explorer.HelloWorldBlockchainExplorerApplication，右键运行，正常情况下则会启动成功。接下来，打开浏览器，访问项目的前端地址 http://localhost/ ，快乐的调试玩耍吧。
 
 
 

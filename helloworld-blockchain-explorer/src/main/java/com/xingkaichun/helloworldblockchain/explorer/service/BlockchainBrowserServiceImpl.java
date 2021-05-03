@@ -9,8 +9,10 @@ import com.xingkaichun.helloworldblockchain.explorer.vo.transaction.*;
 import com.xingkaichun.helloworldblockchain.netcore.NetBlockchainCore;
 import com.xingkaichun.helloworldblockchain.netcore.client.BlockchainNodeClientImpl;
 import com.xingkaichun.helloworldblockchain.netcore.entity.NodeEntity;
+import com.xingkaichun.helloworldblockchain.netcore.transport.dto.PostTransactionRequest;
+import com.xingkaichun.helloworldblockchain.netcore.transport.dto.PostTransactionResponse;
 import com.xingkaichun.helloworldblockchain.netcore.transport.dto.TransactionDTO;
-import com.xingkaichun.helloworldblockchain.util.DateUtil;
+import com.xingkaichun.helloworldblockchain.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -122,8 +124,10 @@ public class BlockchainBrowserServiceImpl implements BlockchainBrowserService {
         List<SubmitTransactionToBlockchainNetworkResponse.Node> failSubmitNode = new ArrayList<>();
         if(nodes != null){
             for(NodeEntity node:nodes){
-                String postTransactionSuccess = new BlockchainNodeClientImpl(node.getIp()).postTransaction(transactionDTO);
-                if(postTransactionSuccess != null && !postTransactionSuccess.isEmpty()){
+                PostTransactionRequest postTransactionRequest = new PostTransactionRequest();
+                postTransactionRequest.setTransaction(transactionDTO);
+                PostTransactionResponse postTransactionResponse = new BlockchainNodeClientImpl(node.getIp()).postTransaction(postTransactionRequest);
+                if(postTransactionResponse != null){
                     successSubmitNode.add(new SubmitTransactionToBlockchainNetworkResponse.Node(node.getIp()));
                 } else {
                     failSubmitNode.add(new SubmitTransactionToBlockchainNetworkResponse.Node(node.getIp()));
@@ -151,7 +155,7 @@ public class BlockchainBrowserServiceImpl implements BlockchainBrowserService {
         blockDto.setConfirmCount(BlockTool.getTransactionCount(block));
         blockDto.setBlockSize(SizeTool.calculateBlockSize(block)+"字符");
         blockDto.setTransactionCount(BlockTool.getTransactionCount(block));
-        blockDto.setTime(DateUtil.timestamp2ChinaTime(block.getTimestamp()));
+        blockDto.setTime(TimeUtil.timestamp2FormatDate(block.getTimestamp()));
         blockDto.setMinerIncentiveValue(BlockTool.getMinerIncentiveValue(block));
         blockDto.setDifficulty(BlockTool.formatDifficulty(block.getDifficulty()));
         blockDto.setNonce(block.getNonce());
@@ -223,7 +227,7 @@ public class BlockchainBrowserServiceImpl implements BlockchainBrowserService {
         long blockchainHeight = getBlockchainCore().queryBlockchainHeight();
         Block block = getBlockchainCore().queryBlockByBlockHeight(transaction.getBlockHeight());
         transactionView.setConfirmCount(blockchainHeight-block.getHeight()+1);
-        transactionView.setBlockTime(DateUtil.timestamp2ChinaTime(block.getTimestamp()));
+        transactionView.setBlockTime(TimeUtil.timestamp2FormatDate(block.getTimestamp()));
         transactionView.setBlockHash(block.getHash());
 
         List<TransactionInput> inputs = transaction.getInputs();

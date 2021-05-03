@@ -4,10 +4,11 @@ import com.xingkaichun.helloworldblockchain.netcore.client.BlockchainNodeClientI
 import com.xingkaichun.helloworldblockchain.netcore.entity.NodeEntity;
 import com.xingkaichun.helloworldblockchain.netcore.service.ConfigurationService;
 import com.xingkaichun.helloworldblockchain.netcore.service.NodeService;
+import com.xingkaichun.helloworldblockchain.netcore.transport.dto.GetBlockchianHeightRequest;
+import com.xingkaichun.helloworldblockchain.netcore.transport.dto.GetBlockchianHeightResponse;
 import com.xingkaichun.helloworldblockchain.setting.GlobalSetting;
-import com.xingkaichun.helloworldblockchain.util.ThreadUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.xingkaichun.helloworldblockchain.util.LogUtil;
+import com.xingkaichun.helloworldblockchain.util.SleepUtil;
 
 import java.util.List;
 
@@ -18,8 +19,6 @@ import java.util.List;
  * @author 邢开春 409060350@qq.com
  */
 public class BlockchainHeightSearcher {
-
-    private static final Logger logger = LoggerFactory.getLogger(BlockchainHeightSearcher.class);
 
     private ConfigurationService configurationService;
     private NodeService nodeService;
@@ -36,9 +35,9 @@ public class BlockchainHeightSearcher {
                 try {
                     searchBlockchainHeight();
                 } catch (Exception e) {
-                    logger.error("在区块链网络中搜索节点的高度异常",e);
+                    LogUtil.error("在区块链网络中搜索节点的高度异常",e);
                 }
-                ThreadUtil.sleep(GlobalSetting.NodeConstant.SEARCH_BLOCKCHAIN_HEIGHT_TIME_INTERVAL);
+                SleepUtil.sleep(GlobalSetting.NodeConstant.SEARCH_BLOCKCHAIN_HEIGHT_TIME_INTERVAL);
             }
         }).start();
     }
@@ -46,9 +45,10 @@ public class BlockchainHeightSearcher {
     private void searchBlockchainHeight() {
         List<NodeEntity> nodes = nodeService.queryAllNodeList();
         for(NodeEntity node:nodes){
-            Long blockchainHeight = new BlockchainNodeClientImpl(node.getIp()).getBlockchainHeight();
-            if(blockchainHeight != null){
-                node.setBlockchainHeight(blockchainHeight);
+            GetBlockchianHeightRequest getBlockchianHeightRequest = new GetBlockchianHeightRequest();
+            GetBlockchianHeightResponse getBlockchianHeightResponse = new BlockchainNodeClientImpl(node.getIp()).getBlockchainHeight(getBlockchianHeightRequest);
+            if(getBlockchianHeightResponse != null){
+                node.setBlockchainHeight(getBlockchianHeightResponse.getBlockchainHeight());
                 nodeService.updateNode(node);
             }
         }

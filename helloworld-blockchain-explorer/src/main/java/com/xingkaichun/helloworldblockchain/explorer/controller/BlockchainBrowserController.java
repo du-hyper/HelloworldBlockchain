@@ -12,6 +12,8 @@ import com.xingkaichun.helloworldblockchain.explorer.service.BlockchainBrowserSe
 import com.xingkaichun.helloworldblockchain.explorer.vo.BlockchainApiRoute;
 import com.xingkaichun.helloworldblockchain.explorer.vo.account.GenerateAccountRequest;
 import com.xingkaichun.helloworldblockchain.explorer.vo.account.GenerateAccountResponse;
+import com.xingkaichun.helloworldblockchain.explorer.vo.account.GenerateAndSaveAccountRequest;
+import com.xingkaichun.helloworldblockchain.explorer.vo.account.GenerateAndSaveAccountResponse;
 import com.xingkaichun.helloworldblockchain.explorer.vo.block.*;
 import com.xingkaichun.helloworldblockchain.explorer.vo.framwork.PageCondition;
 import com.xingkaichun.helloworldblockchain.explorer.vo.framwork.ServiceResult;
@@ -21,10 +23,9 @@ import com.xingkaichun.helloworldblockchain.explorer.vo.transaction.*;
 import com.xingkaichun.helloworldblockchain.netcore.NetBlockchainCore;
 import com.xingkaichun.helloworldblockchain.netcore.transport.dto.TransactionDTO;
 import com.xingkaichun.helloworldblockchain.setting.GlobalSetting;
-import com.xingkaichun.helloworldblockchain.util.DateUtil;
+import com.xingkaichun.helloworldblockchain.util.LogUtil;
 import com.xingkaichun.helloworldblockchain.util.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.xingkaichun.helloworldblockchain.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,8 +42,6 @@ import java.util.List;
  */
 @RestController
 public class BlockchainBrowserController {
-
-    private static final Logger logger = LoggerFactory.getLogger(BlockchainBrowserController.class);
 
     @Autowired
     private NetBlockchainCore netBlockchainCore;
@@ -61,7 +60,24 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("生成账户成功",response);
         } catch (Exception e){
             String message = "生成账户失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
+            return ServiceResult.createFailServiceResult(message);
+        }
+    }
+
+    /**
+     * 生成账户(私钥、公钥、公钥哈希、地址)并保存
+     */
+    @RequestMapping(value = BlockchainApiRoute.GENERATE_AND_SAVE_ACCOUNT,method={RequestMethod.GET,RequestMethod.POST})
+    public ServiceResult<GenerateAndSaveAccountResponse> generateAndSaveAccount(@RequestBody GenerateAndSaveAccountRequest request){
+        try {
+            Account account = getBlockchainCore().getWallet().createAndAddAccount();
+            GenerateAndSaveAccountResponse response = new GenerateAndSaveAccountResponse();
+            response.setAccount(account);
+            return ServiceResult.createSuccessServiceResult("[生成账户并保存]成功",response);
+        } catch (Exception e){
+            String message = "[生成账户并保存]失败";
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }
@@ -76,7 +92,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("提交交易到区块链网络成功", response);
         } catch (Exception e){
             String message = "提交交易到区块链网络失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }
@@ -97,7 +113,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("根据交易哈希查询交易成功",response);
         } catch (Exception e){
             String message = "根据交易哈希查询交易失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }
@@ -118,7 +134,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("根据交易高度查询交易成功",response);
         } catch (Exception e){
             String message = "根据交易高度查询交易失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }
@@ -135,7 +151,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("[查询交易输出]成功",response);
         } catch (Exception e){
             String message = "[查询交易输出]失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }
@@ -153,7 +169,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("[查询交易输出]成功",response);
         } catch (Exception e){
             String message = "[查询交易输出]失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }
@@ -170,7 +186,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("查询区块链高度成功",response);
         } catch (Exception e){
             String message = "查询区块链高度失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createSuccessServiceResult(message,null);
         }
     }
@@ -190,7 +206,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("根据交易哈希查询挖矿中交易成功",response);
         } catch (Exception e){
             String message = "根据交易哈希查询挖矿中交易失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }
@@ -217,7 +233,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("查询挖矿中的交易成功",response);
         } catch (Exception e){
             String message = "查询挖矿中的交易失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createSuccessServiceResult(message,null);
         }
     }
@@ -237,7 +253,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("成功获取区块",response);
         } catch (Exception e){
             String message = "查询获取失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }
@@ -258,7 +274,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("[根据区块哈希查询区块]成功",response);
         } catch (Exception e){
             String message = "[根据区块哈希查询区块]失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }
@@ -290,7 +306,7 @@ public class BlockchainBrowserController {
                 blockDto.setBlockSize(SizeTool.calculateBlockSize(block)+"字符");
                 blockDto.setTransactionCount(BlockTool.getTransactionCount(block));
                 blockDto.setMinerIncentiveValue(BlockTool.getMinerIncentiveValue(block));
-                blockDto.setTime(DateUtil.timestamp2ChinaTime(block.getTimestamp()));
+                blockDto.setTime(TimeUtil.timestamp2FormatDate(block.getTimestamp()));
                 blockDto.setHash(block.getHash());
                 blockDtoList.add(blockDto);
             }
@@ -300,7 +316,7 @@ public class BlockchainBrowserController {
             return ServiceResult.createSuccessServiceResult("[查询最近的10个区块]成功",response);
         } catch (Exception e){
             String message = "[查询最近的10个区块]失败";
-            logger.error(message,e);
+            LogUtil.error(message,e);
             return ServiceResult.createFailServiceResult(message);
         }
     }

@@ -4,10 +4,10 @@ import com.xingkaichun.helloworldblockchain.core.BlockchainCore;
 import com.xingkaichun.helloworldblockchain.netcore.client.BlockchainNodeClientImpl;
 import com.xingkaichun.helloworldblockchain.netcore.entity.NodeEntity;
 import com.xingkaichun.helloworldblockchain.netcore.service.NodeService;
+import com.xingkaichun.helloworldblockchain.netcore.transport.dto.PingRequest;
 import com.xingkaichun.helloworldblockchain.setting.GlobalSetting;
-import com.xingkaichun.helloworldblockchain.util.ThreadUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.xingkaichun.helloworldblockchain.util.LogUtil;
+import com.xingkaichun.helloworldblockchain.util.SleepUtil;
 
 import java.util.List;
 
@@ -21,8 +21,6 @@ import java.util.List;
  * @author 邢开春 409060350@qq.com
  */
 public class NodeBroadcaster {
-
-    private static final Logger logger = LoggerFactory.getLogger(NodeBroadcaster.class);
 
     private NodeService nodeService;
     private BlockchainCore blockchainCore;
@@ -40,9 +38,9 @@ public class NodeBroadcaster {
                 try {
                     broadcastNode();
                 } catch (Exception e) {
-                    logger.error("在区块链网络中广播自己出现异常",e);
+                    LogUtil.error("在区块链网络中广播自己出现异常",e);
                 }
-                ThreadUtil.sleep(GlobalSetting.NodeConstant.NODE_BROADCAST_TIME_INTERVAL);
+                SleepUtil.sleep(GlobalSetting.NodeConstant.NODE_BROADCAST_TIME_INTERVAL);
             }
         }).start();
     }
@@ -53,7 +51,7 @@ public class NodeBroadcaster {
     private void broadcastNode() {
         List<NodeEntity> nodes = nodeService.queryAllNodeList();
         for(NodeEntity node:nodes){
-            new BlockchainNodeClientImpl(node.getIp()).pingNode();
+            new BlockchainNodeClientImpl(node.getIp()).pingNode(new PingRequest());
         }
     }
 }

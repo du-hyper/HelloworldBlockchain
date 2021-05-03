@@ -7,11 +7,11 @@ import com.xingkaichun.helloworldblockchain.netcore.client.BlockchainNodeClientI
 import com.xingkaichun.helloworldblockchain.netcore.entity.NodeEntity;
 import com.xingkaichun.helloworldblockchain.netcore.service.NodeService;
 import com.xingkaichun.helloworldblockchain.netcore.transport.dto.BlockDTO;
+import com.xingkaichun.helloworldblockchain.netcore.transport.dto.PostBlockRequest;
 import com.xingkaichun.helloworldblockchain.setting.GlobalSetting;
+import com.xingkaichun.helloworldblockchain.util.LogUtil;
 import com.xingkaichun.helloworldblockchain.util.LongUtil;
-import com.xingkaichun.helloworldblockchain.util.ThreadUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.xingkaichun.helloworldblockchain.util.SleepUtil;
 
 import java.util.List;
 
@@ -22,8 +22,6 @@ import java.util.List;
  * @author 邢开春 409060350@qq.com
  */
 public class BlockBroadcaster {
-
-    private static final Logger logger = LoggerFactory.getLogger(BlockBroadcaster.class);
 
     private NodeService nodeService;
     private BlockchainCore blockchainCore;
@@ -40,9 +38,10 @@ public class BlockBroadcaster {
                 try {
                     broadcastBlock();
                 } catch (Exception e) {
-                    logger.error("在区块链网络中广播自己的区块出现异常",e);
+                    LogUtil.error("在区块链网络中广播自己的区块出现异常",e);
                 }
-                ThreadUtil.sleep(GlobalSetting.NodeConstant.CHECK_LOCAL_BLOCKCHAIN_HEIGHT_IS_HIGH_TIME_INTERVAL);
+                SleepUtil.sleep(GlobalSetting.NodeConstant.BLOCK_BROADCASTER_TIME_INTERVAL);
+
             }
         }).start();
     }
@@ -73,12 +72,14 @@ public class BlockBroadcaster {
             if(LongUtil.isLessEqualThan(blockchainHeight,node.getBlockchainHeight())){
                 continue;
             }
-            new BlockchainNodeClientImpl(node.getIp()).postBlock(blockDTO);
+            PostBlockRequest postBlockRequest = new PostBlockRequest();
+            postBlockRequest.setBlock(blockDTO);
+            new BlockchainNodeClientImpl(node.getIp()).postBlock(postBlockRequest);
             ++broadcastNodeCount;
             if(broadcastNodeCount > 50){
                 return;
             }
-            ThreadUtil.sleep(1000*10);
+            SleepUtil.sleep(1000*10);
         }
     }
 

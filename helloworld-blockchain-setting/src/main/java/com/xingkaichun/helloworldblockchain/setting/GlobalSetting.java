@@ -1,9 +1,5 @@
 package com.xingkaichun.helloworldblockchain.setting;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * 全局设置
  *
@@ -14,7 +10,7 @@ public class GlobalSetting {
     //区块链网络默认的节点端口
     public static final int DEFAULT_PORT = 8888;
     //区块链网络中的种子节点
-    public static final List<String> SEED_NODE_LIST = Arrays.asList("139.9.125.122","119.3.57.171");
+    public static final String[] SEED_NODE_LIST = new String[]{"139.9.125.122","119.3.57.171"};
 
     /**
      * 创世区块
@@ -78,14 +74,13 @@ public class GlobalSetting {
         /**
          * 版本列表
          */
-        public static final List<Long> BLOCK_CHAIN_VERSION_LIST =
-                Collections.unmodifiableList(Arrays.asList(10000L));
+        public static final Long[] BLOCK_CHAIN_VERSION_LIST = new Long[]{10000L};
 
         /**
          * 检查系统版本是否支持。
          */
         public static boolean isVersionLegal(long blockHeight){
-            return blockHeight <= BLOCK_CHAIN_VERSION_LIST.get(BLOCK_CHAIN_VERSION_LIST.size() - 1);
+            return blockHeight <= BLOCK_CHAIN_VERSION_LIST[BLOCK_CHAIN_VERSION_LIST.length-1];
         }
     }
 
@@ -106,16 +101,18 @@ public class GlobalSetting {
         //两个区块链有分叉时，区块差异数量大于这个值，则真的分叉了。
         public static final long FORK_BLOCK_SIZE = 100;
         //在区块链网络中自动搜寻新的节点的间隔时间
-        public static final long SEARCH_NEW_NODE_TIME_INTERVAL = 1000 * 60 * 2;
-        //在区块链网络中节点的区块链高度
+        public static final long SEARCH_NODE_TIME_INTERVAL = 1000 * 60 * 2;
+        //在区块链网络中自动搜索节点的区块链高度
         public static final long SEARCH_BLOCKCHAIN_HEIGHT_TIME_INTERVAL = 1000 * 60 * 2;
         //在区块链网络中自动搜寻新的区块的间隔时间。
-        public static final long SEARCH_NEW_BLOCKS_TIME_INTERVAL = 1000 * 10;
-        //检查自己的区块链高度在区块链网络中是否是最大的高度的时间间隔。
-        public static final long CHECK_LOCAL_BLOCKCHAIN_HEIGHT_IS_HIGH_TIME_INTERVAL = 1000 * 60;
+        public static final long SEARCH_BLOCKS_TIME_INTERVAL = 1000 * 60 * 2;
+        //区块高度广播时间间隔
+        public static final long BLOCKCHAIN_HEIGHT_BROADCASTER_TIME_INTERVAL = 1000 * 20;
+        //区块广播时间间隔。
+        public static final long BLOCK_BROADCASTER_TIME_INTERVAL = 1000 * 20;
         //定时将种子节点加入本地区块链网络的时间间隔。
-        public static final long ADD_SEED_NODE_TIME_INTERVAL = 1000 * 60 * 60;
+        public static final long ADD_SEED_NODE_TIME_INTERVAL = 1000 * 60 * 2;
         //广播自己节点的时间间隔。
-        public static final long NODE_BROADCAST_TIME_INTERVAL = 1000 * 60* 60 * 24;
+        public static final long NODE_BROADCAST_TIME_INTERVAL = 1000 * 60 * 2;
     }
 }

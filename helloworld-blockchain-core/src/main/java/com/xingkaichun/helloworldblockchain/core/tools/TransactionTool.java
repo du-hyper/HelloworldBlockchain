@@ -9,8 +9,7 @@ import com.xingkaichun.helloworldblockchain.core.model.transaction.*;
 import com.xingkaichun.helloworldblockchain.crypto.*;
 import com.xingkaichun.helloworldblockchain.netcore.transport.dto.*;
 import com.xingkaichun.helloworldblockchain.util.JsonUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.xingkaichun.helloworldblockchain.util.LogUtil;
 
 import java.util.*;
 
@@ -20,8 +19,6 @@ import java.util.*;
  * @author 邢开春 409060350@qq.com
  */
 public class TransactionTool {
-
-    private static final Logger logger = LoggerFactory.getLogger(TransactionTool.class);
 
     /**
      * 交易输入总额
@@ -67,7 +64,7 @@ public class TransactionTool {
     /**
      * 交易手续费（只计算普通交易的手续费，coinbase交易抛出异常）
      */
-    public static long getFee(Transaction transaction) {
+    public static long getTransactionFee(Transaction transaction) {
         if(TransactionType.NORMAL == transaction.getTransactionType()){
             long fee = getInputsValue(transaction) - getOutputsValue(transaction);
             return fee;
@@ -80,7 +77,7 @@ public class TransactionTool {
      */
     public static long getFeeRate(Transaction transaction) {
         if(TransactionType.NORMAL == transaction.getTransactionType()){
-            return TransactionTool.getFee(transaction)/SizeTool.calculateTransactionSize(transaction);
+            return TransactionTool.getTransactionFee(transaction)/SizeTool.calculateTransactionSize(transaction);
         }else {
             throw new RuntimeException("只能计算普通交易类型的手续费");
         }
@@ -134,7 +131,7 @@ public class TransactionTool {
                 }
             }
         }catch (Exception e){
-            logger.debug("交易校验失败：交易[输入脚本]解锁交易[输出脚本]异常。",e);
+            LogUtil.error("交易校验失败：交易[输入脚本]解锁交易[输出脚本]异常。",e);
             return false;
         }
         return true;
@@ -307,7 +304,7 @@ public class TransactionTool {
         if(outputs != null){
             for(TransactionOutput output:outputs){
                 if(!isTransactionAmountLegal(output.getValue())){
-                    logger.debug("交易金额不合法");
+                    LogUtil.debug("交易金额不合法");
                     return false;
                 }
             }
@@ -323,7 +320,7 @@ public class TransactionTool {
         if(outputs != null){
             for(TransactionOutput output:outputs){
                 if(!AccountUtil.isPayToPublicKeyHashAddress(output.getAddress())){
-                    logger.debug("交易地址不合法");
+                    LogUtil.debug("交易地址不合法");
                     return true;
                 }
             }
@@ -338,7 +335,7 @@ public class TransactionTool {
         try {
             //交易金额不能小于等于0
             if(transactionAmount <= 0){
-                logger.debug("交易金额不合法：交易金额不能小于等于0");
+                LogUtil.debug("交易金额不合法：交易金额不能小于等于0");
                 return false;
             }
             //交易金额最小值不需要校验，假设值不正确，业务逻辑通过不了。
@@ -346,34 +343,9 @@ public class TransactionTool {
             //交易金额最大值不需要校验，假设值不正确，业务逻辑通过不了
             return true;
         } catch (Exception e) {
-            logger.debug("校验金额方法出现异常，请检查。",e);
+            LogUtil.error("校验金额方法出现异常，请检查。",e);
             return false;
         }
-    }
-
-    /**
-     * 校验激励
-     */
-    public static boolean isIncentiveRight(long targetMinerReward, Transaction transaction) {
-        if(transaction.getTransactionType() != TransactionType.COINBASE){
-            logger.debug("区块数据异常，区块中的第一笔交易应当是挖矿奖励交易。");
-            return false;
-        }
-        List<TransactionInput> inputs = transaction.getInputs();
-        List<TransactionOutput> outputs = transaction.getOutputs();
-        if(inputs != null && inputs.size()!=0){
-            logger.debug("区块数据异常，挖矿奖励交易交易输入应当是空。");
-            return false;
-        }
-        if(outputs == null || outputs.size()!=1){
-            logger.debug("区块数据异常，挖矿奖励交易只能有一个交易输出。");
-            return false;
-        }
-        if(targetMinerReward < outputs.get(0).getValue()){
-            logger.debug("挖矿奖励数据异常，挖矿奖励金额大于系统核算奖励金额。");
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -405,7 +377,7 @@ public class TransactionTool {
             for (TransactionOutput output:outputs){
                 String address = output.getAddress();
                 if(addressSet.contains(address)){
-                    logger.debug(String.format("区块数据异常，地址[%s]重复。",address));
+                    LogUtil.debug(String.format("区块数据异常，地址[%s]重复。",address));
                     return true;
                 }else {
                     addressSet.add(address);
@@ -413,18 +385,6 @@ public class TransactionTool {
             }
         }
         return false;
-    }
-    /**
-     * 交易输入必须要大于交易输出
-     */
-    public static boolean isTransactionInputsGreatEqualThanOutputsRight(Transaction transaction) {
-        long inputsValue = TransactionTool.getInputsValue(transaction);
-        long outputsValue = TransactionTool.getOutputsValue(transaction);
-        if(inputsValue < outputsValue) {
-            logger.debug("交易校验失败：交易的输入必须大于等于交易的输出。不合法的交易。");
-            return false;
-        }
-        return true;
     }
 
     public static UnspentTransactionOutput transactionOutput2UnspentTransactionOutput(TransactionOutput transactionOutput) {
@@ -448,7 +408,8 @@ public class TransactionTool {
 
     public static long calculateTransactionFee(Transaction transaction) {
         if(TransactionType.COINBASE == transaction.getTransactionType()){
-            return transaction.getOutputs().get(0).getValue();
+            //CoinBase交易没有交易手续费
+            return 0;
         }else if(TransactionType.NORMAL == transaction.getTransactionType()){
             long inputsValue = getInputsValue(transaction);
             long outputsValue = getOutputsValue(transaction);
@@ -456,5 +417,26 @@ public class TransactionTool {
         }else {
             throw new RuntimeException("没有该交易类型。");
         }
+    }
+
+    /**
+     * 按照费率(每字符的手续费)从大到小排序交易
+     */
+    public static void sortByFeeRateDescend(List<Transaction> transactionList) {
+        if(transactionList == null){
+            return;
+        }
+        transactionList.sort((transaction1, transaction2) -> {
+            long transaction1FeeRate = TransactionTool.getFeeRate(transaction1);
+            long transaction2FeeRate = TransactionTool.getFeeRate(transaction2);
+            long diffFeeRate = transaction1FeeRate - transaction2FeeRate;
+            if(diffFeeRate>0){
+                return -1;
+            }else if(diffFeeRate==0){
+                return 0;
+            }else {
+                return 1;
+            }
+        });
     }
 }
