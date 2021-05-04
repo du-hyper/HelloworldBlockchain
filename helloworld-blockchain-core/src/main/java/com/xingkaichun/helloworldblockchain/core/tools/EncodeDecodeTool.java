@@ -52,6 +52,12 @@ public class EncodeDecodeTool {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 反序列化交易输出
+     * @param bytesTransactionOutput
+     * @return
+     */
     public static TransactionOutput decodeToTransactionOutput(byte[] bytesTransactionOutput) {
         try {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytesTransactionOutput);
@@ -59,10 +65,9 @@ public class EncodeDecodeTool {
             TransactionOutput transactionOutput = (TransactionOutput) objectInputStream.readObject();
             return transactionOutput;
         } catch (IOException | ClassNotFoundException e) {
-            LogUtil.error("序列化/反序列化失败",e);
+            LogUtil.error("反序列化[交易输出]失败",e);
             throw new RuntimeException(e);
         }
-
     }
 
 

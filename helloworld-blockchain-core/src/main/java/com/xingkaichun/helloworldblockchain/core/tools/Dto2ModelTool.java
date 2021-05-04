@@ -61,6 +61,12 @@ public class Dto2ModelTool {
         return transactionList;
     }
 
+    /**
+     * 将交易DTO转为交易对象
+     * @param blockchainDataBase
+     * @param transactionDTO
+     * @return
+     */
     public static Transaction transactionDto2Transaction(BlockchainDatabase blockchainDataBase, TransactionDTO transactionDTO) {
         List<TransactionInput> inputs = new ArrayList<>();
         List<TransactionInputDTO> transactionInputDtoList = transactionDTO.getInputs();

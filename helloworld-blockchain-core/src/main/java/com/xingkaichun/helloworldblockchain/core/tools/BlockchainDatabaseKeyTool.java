@@ -87,6 +87,11 @@ public class BlockchainDatabaseKeyTool {
         String stringKey = TRANSACTION_HASH_TO_TRANSACTION_HEIGHT_PREFIX_FLAG + transactionHash + END_FLAG;
         return ByteUtil.encode(stringKey);
     }
+
+    /**
+     * 根据交易高度 查询 交易输出
+     * @param transactionOutputHeight  交易高度
+     */
     public static byte[] buildTransactionOutputHeightToTransactionOutputKey(long transactionOutputHeight) {
         String stringKey = TRANSACTION_OUTPUT_HEIGHT_TO_TRANSACTION_OUTPUT_PREFIX_FLAG + transactionOutputHeight + END_FLAG;
         return ByteUtil.encode(stringKey);
@@ -95,6 +100,11 @@ public class BlockchainDatabaseKeyTool {
         String stringKey = TRANSACTION_OUTPUT_ID_TO_TRANSACTION_OUTPUT_HEIGHT_PREFIX_FLAG + transactionOutputId.getTransactionOutputId() + END_FLAG;
         return ByteUtil.encode(stringKey);
     }
+
+    /**
+     * 根据交易输出ID 查询 交易高度
+     * @param transactionOutputId  交易hash|交易序号
+     */
     public static byte[] buildTransactionOutputIdToUnspentTransactionOutputHeightKey(TransactionOutputId transactionOutputId) {
         String stringKey = TRANSACTION_OUTPUT_ID_TO_UNSPENT_TRANSACTION_OUTPUT_HEIGHT_PREFIX_FLAG + transactionOutputId.getTransactionOutputId() + END_FLAG;
         return ByteUtil.encode(stringKey);

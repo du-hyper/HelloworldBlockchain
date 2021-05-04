@@ -9,7 +9,6 @@ import com.xingkaichun.helloworldblockchain.setting.GlobalSetting;
 import com.xingkaichun.helloworldblockchain.util.LogUtil;
 import com.xingkaichun.helloworldblockchain.util.LongUtil;
 import com.xingkaichun.helloworldblockchain.util.SleepUtil;
-import sun.util.resources.cldr.ps.CurrencyNames_ps;
 
 import java.util.List;
 
